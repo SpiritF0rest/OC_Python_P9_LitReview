@@ -1,0 +1,13 @@
+{% extends "index.html" %}
+{% block content %}
+  <h2>Inscrivez-vous</h2>
+  <form method="post">
+    {{ form.as_p }}
+    {% csrf_token %}
+    <button type="submit">S'inscrire</button>
+  </form>
+  {% if forms.errors %}
+    {{ form.errors }}
+  {% endif %}
+  <p>Vous avez déjà un compte ? <a href="{% url 'login' %}">Connectez-vous.</a></p>
+{% endblock content %}
