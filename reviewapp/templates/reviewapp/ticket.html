@@ -1,0 +1,9 @@
+{% extends "index.html" %}
+{% block content %}
+    <h2>Ticket - {{ ticket.user }}</h2>
+    <h3>{{ ticket.title }}</h3>
+    <p>{{ ticket.time_created|date:"H:i, d F Y" }}</p>
+    <img src="{{ ticket.image.url }}" />
+    <p>{{ ticket.description }}</p>
+
+{% endblock content %}

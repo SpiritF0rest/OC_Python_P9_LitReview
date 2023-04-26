@@ -15,6 +15,7 @@
             <ul>
                 {% if user.is_authenticated %}
                 <li><a href="{% url 'home' %}">Flux</a></li>
+                <li><a href="{% url 'ticket-create' %}">Posts</a></li>
                 <li><a href="{% url 'logout' %}">Se déconnecter</a></li>
                 {% endif %}
             </ul>

@@ -11,4 +11,10 @@ urlpatterns = [
     path('login/', authentication.views.LoginView.as_view(), name="login"),
     path('logout/', authentication.views.logout_user, name='logout'),
     path('', reviewapp.views.home, name='home'),
+    path('tickets/add/', reviewapp.views.TicketCreationView.as_view(), name='ticket-create'),
+    path('tickets/<int:ticket_id>/', reviewapp.views.TicketView.as_view(), name='ticket'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    
