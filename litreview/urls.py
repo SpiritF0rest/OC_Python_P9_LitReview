@@ -13,6 +13,8 @@ urlpatterns = [
     path('', reviewapp.views.home, name='home'),
     path('tickets/add/', reviewapp.views.TicketCreationView.as_view(), name='ticket-create'),
     path('tickets/<int:ticket_id>/', reviewapp.views.TicketView.as_view(), name='ticket'),
+    path('reviews/add/<int:ticket_id>/', reviewapp.views.ReviewCreationView.as_view(), name='review-create'),
+    path('tickets/reviews/add', reviewapp.views.FullReviewView.as_view(), name='review-ticket-create')
 ]
 
 if settings.DEBUG:

@@ -1,4 +1,26 @@
 {% extends "index.html" %}
 {% block content %}
-  <h2>HOME</h2>
+  <div>
+    <p><a href="{% url 'ticket-create' %}">Demander une critique</a></p>
+    <p><a href="{% url 'review-ticket-create' %}">Créer une critique</a></p>
+  </div>
+  {% for ticket in tickets %}
+    <div>
+      <div>
+        <p>{{ ticket.user }} a demandé une critique</p>
+        <p>{{ ticket.time_created|date:"H:i, d F Y" }}</p>
+      </div>
+      <p>{{ ticket.title }}</p>
+      {% if ticket.description %}
+      <p>{{ ticket.description }}</p>
+      {% endif %}
+      {% if ticket.image %}
+      <img src="{{ ticket.image.url }}" />
+      {% endif %}
+      <a href="{% url 'review-create' ticket.id %}">Créer une critique</a>
+    </div>
+  {% endfor %}
+  {% for review in reviews %}
+    <p>{{ review }}</p>
+  {% endfor %}
 {% endblock content %}

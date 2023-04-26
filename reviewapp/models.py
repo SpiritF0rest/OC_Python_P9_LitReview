@@ -12,12 +12,15 @@ class Ticket(models.Model):
 
 
 class Review(models.Model):
+    RATING_CHOICES = [('0', 0), ('1', 1), ('2', 2), ('3', 3), ('4', 4), ('5', 5)]
+    RATING_LABEL = "Note"
     ticket = models.ForeignKey(to=Ticket, on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(
         # validates that rating must be between 0 and 5
-        validators=[MinValueValidator(0), MaxValueValidator(5)])
-    headline = models.CharField(max_length=128)
-    body = models.CharField(max_length=8192, blank=True)
+        validators=[MinValueValidator(0), MaxValueValidator(5)],
+        verbose_name=RATING_LABEL)
+    headline = models.CharField(max_length=128, verbose_name="Titre")
+    body = models.CharField(max_length=8192, blank=True, verbose_name="Commentaire")
     user = models.ForeignKey(
         to=settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     time_created = models.DateTimeField(auto_now_add=True)
