@@ -8,15 +8,15 @@
 </head>
 <body>
     <header>
-        <div>
-            <h1>LITReview</h1>
+        <div class="logo_bloc">
+            <img src="{% static 'images/logo.png' %}" alt="logo de LITReview"/>
         </div>
         <nav>
             <ul>
                 {% if user.is_authenticated %}
-                <li><a href="{% url 'home' %}">Flux</a></li>
-                <li><a href="{% url 'ticket-create' %}">Posts</a></li>
-                <li><a href="{% url 'logout' %}">Se déconnecter</a></li>
+                <li><a href="{% url 'home' %}" class="nav_link">Flux</a></li>
+                <li><a href="{% url 'ticket-create' %}"class="nav_link">Posts</a></li>
+                <li><a href="{% url 'logout' %}" class="nav_link">Se déconnecter</a></li>
                 {% endif %}
             </ul>
         </nav>

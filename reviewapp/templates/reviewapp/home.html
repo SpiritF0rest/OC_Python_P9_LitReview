@@ -1,13 +1,17 @@
 {% extends "index.html" %}
 {% block content %}
-  <div>
-    <p><a href="{% url 'ticket-create' %}">Demander une critique</a></p>
-    <p><a href="{% url 'review-ticket-create' %}">Créer une critique</a></p>
+  <div class="home_buttons_bloc">
+    <p class="button"><a href="{% url 'ticket-create' %}">Demander une critique</a></p>
+    <p class="button"><a href="{% url 'review-ticket-create' %}">Créer une critique</a></p>
   </div>
   {% for ticket in tickets %}
-    <div>
-      <div>
-        <p>{{ ticket.user }} a demandé une critique</p>
+    <div class="ticket_bloc">
+      <div class="ticket_header">
+        {% if ticket.user == user %}
+          <p>Vous avez demandé une critique</p>
+        {% else %}
+          <p>{{ ticket.user }} a demandé une critique</p>
+        {% endif %}
         <p>{{ ticket.time_created|date:"H:i, d F Y" }}</p>
       </div>
       <p>{{ ticket.title }}</p>
@@ -15,12 +19,51 @@
       <p>{{ ticket.description }}</p>
       {% endif %}
       {% if ticket.image %}
-      <img src="{{ ticket.image.url }}" />
+      <div class="image">
+        <img src="{{ ticket.image.url }}" />
+      </div>
       {% endif %}
-      <a href="{% url 'review-create' ticket.id %}">Créer une critique</a>
+      <a href="{% url 'review-create' ticket.id %}" class="button ticket_button">Créer une critique</a>
     </div>
   {% endfor %}
   {% for review in reviews %}
-    <p>{{ review }}</p>
+    <div class="review_bloc">
+      <div class="review_header">
+        {% if review.user == user %}
+          <p>Vous avez publié une critique</p>
+        {% else %}
+          <p>{{ review.user }} a publié une critique</p>
+        {% endif %}
+        <p>{{ review.time_created|date:"H:i, d F Y" }}</p>
+      </div>
+      <div>
+        {% spaceless %}
+        <h2>{{ review.headline }} -
+          {% if review.rating > 0 %}<span>&#x2605;</span>{% else %}<span>&#x2606;</span>{% endif %}
+          {% if review.rating > 1 %}<span>&#x2605;</span>{% else %}<span>&#x2606;</span>{% endif %}
+          {% if review.rating > 2 %}<span>&#x2605;</span>{% else %}<span>&#x2606;</span>{% endif %}
+          {% if review.rating > 3 %}<span>&#x2605;</span>{% else %}<span>&#x2606;</span>{% endif %}
+          {% if review.rating > 4 %}<span>&#x2605;</span>{% else %}<span>&#x2606;</span>{% endif %}
+        </h2>
+        {% endspaceless %}
+      </div>
+      <p>{{ review.body }}</p>
+      <div class="ticket_bloc">
+        {% if review.ticket.user == user %}
+          <h3>Ticket - Vous</h3>
+        {% else %}
+          <h3>Ticket - {{ review.ticket.user }}</h3>
+        {% endif %}
+        <p>{{ review.ticket.title }}</p>
+        {% if review.ticket.description %}
+          <p>{{ review.ticket.description }}</p>
+        {% endif %}
+        {% if review.ticket.image %}
+          <div class="image">
+            <img src="{{ review.ticket.image.url }}" />
+          </div>
+        {% endif %}
+      </div>
+    </div>
   {% endfor %}
 {% endblock content %}

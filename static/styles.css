@@ -1,8 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,300;0,400;0,500;0,700;1,300&family=Varela+Round&display=swap');
+
+body {
+    background-color: #f5f5f5;
+    font-family: Ubuntu, Helvetica, Arial, sans-serif;
+    margin: 0;
+}
+
+header, main {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+main {
+    width: 60%;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.nav_link:hover {
+    color: #048b9a;
+}
+
 header, nav > ul {
-    display: flex
+    display: flex;
+}
+
+header {
+    height: 7rem;
+    padding: 1rem;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo_bloc {
+    height: 100%;
+}
+
+.logo_bloc > img {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
 }
 
 nav > ul > li {
     list-style: none;
     margin: 1rem;
+}
+
+.home_buttons_bloc {
+    display: flex;
+    justify-content: center;
+    padding-bottom: 1rem;
+}
+
+.button {
+    padding: 0.5rem 2rem;
+    border: solid black 2px;
+    margin: 0 2rem;
+    border-radius: 0.5rem 0.5rem;
+}
+
+.button:hover {
+    background-color: #048b9a2e;
+}
+
+.ticket_bloc, .review_bloc {
+    border: 2px solid black;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.ticket_bloc {
+    position: relative;
+}
+
+.ticket_header, .review_header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.ticket_button {
+    position: absolute;
+    right: 1rem;
+    bottom: 1rem;
+    margin: 0;
+}
+
+.image {
+    width: 10rem;
+    height: 15rem;
+}
+
+.image > img {
+    object-fit: cover;
+    width: 100%;
+    height: 100%;
 }
