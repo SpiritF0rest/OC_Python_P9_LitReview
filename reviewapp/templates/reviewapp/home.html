@@ -1,11 +1,11 @@
 {% extends "index.html" %}
 {% block content %}
-  <div class="home_buttons_bloc">
+  <div class="home_buttons_block">
     <p class="button"><a href="{% url 'ticket-create' %}">Demander une critique</a></p>
     <p class="button"><a href="{% url 'review-ticket-create' %}">Créer une critique</a></p>
   </div>
   {% for ticket in tickets %}
-    <div class="ticket_bloc">
+    <div class="ticket_block">
       <div class="ticket_header">
         {% if ticket.user == user %}
           <p>Vous avez demandé une critique</p>
@@ -27,7 +27,7 @@
     </div>
   {% endfor %}
   {% for review in reviews %}
-    <div class="review_bloc">
+    <div class="review_block">
       <div class="review_header">
         {% if review.user == user %}
           <p>Vous avez publié une critique</p>
@@ -48,7 +48,7 @@
         {% endspaceless %}
       </div>
       <p>{{ review.body }}</p>
-      <div class="ticket_bloc">
+      <div class="ticket_block">
         {% if review.ticket.user == user %}
           <h3>Ticket - Vous</h3>
         {% else %}
