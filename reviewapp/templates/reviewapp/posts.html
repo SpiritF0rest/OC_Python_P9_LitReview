@@ -17,12 +17,11 @@
                         <img src="{{ post.image.url }}" />
                     </div>
                 {% endif %}
-                <a href="{% url 'review-create' post.id %}" class="button ticket_button">Créer une critique</a>
                 {% if post.user == user %}
-                <div>
-                    <a href="{% url 'update-ticket' post.id %}" class="button">Modifier</a>
-                    <a href="{% url 'delete-ticket' post.id %}" class="button">Supprimer</a>
-                </div>
+                    <div>
+                        <a href="{% url 'update-ticket' post.id %}" class="button">Modifier</a>
+                        <a href="{% url 'delete-ticket' post.id %}" class="button">Supprimer</a>
+                    </div>
                 {% endif %}
             {% else %}
                 <div class="review_header">
@@ -58,10 +57,10 @@
                     {% endif %}
                 </div>
                 {% if post.user == user %}
-                <div>
-                    <a href="{% url 'update-review' post.id %}" class="button">Modifier</a>
-                    <a href="{% url 'delete-review' post.id %}" class="button">Supprimer</a>
-                </div>
+                    <div>
+                        <a href="{% url 'update-review' post.id %}" class="button">Modifier</a>
+                        <a href="{% url 'delete-review' post.id %}" class="button">Supprimer</a>
+                    </div>
                 {% endif %}
             {% endif %}
         </div>

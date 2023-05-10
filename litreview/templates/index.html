@@ -16,6 +16,7 @@
                 {% if user.is_authenticated %}
                 <li><a href="{% url 'home' %}" class="nav_link">Flux</a></li>
                 <li><a href="{% url 'posts' %}"class="nav_link">Posts</a></li>
+                <li><a href="{% url 'add-follower' %}"class="nav_link">Abonnements</a></li>
                 <li><a href="{% url 'logout' %}" class="nav_link">Se déconnecter</a></li>
                 {% endif %}
             </ul>
