@@ -9,6 +9,29 @@ from django.views.generic import View
 from authentication.models import User
 from . import forms, models
 from itertools import chain
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+def get_user_tickets(user):
+    tickets = models.Ticket.objects.filter(user=user)
+    tickets = tickets.annotate(content_type=Value('TICKET', CharField()))
+    return tickets
+
+
+def get_user_reviews(user):
+    reviews = models.Review.objects.filter(user=user)
+    reviews = reviews.annotate(content_type=Value('REVIEW', CharField()))
+    return reviews
+
+
+def get_ticket_by_id(ticket_id):
+    ticket = models.Ticket.objects.get(id=ticket_id)
+    return ticket
+
+
+def get_review_by_id(review_id):
+    review = models.Review.objects.get(id=review_id)
+    return review
 
 
 @login_required
@@ -16,22 +39,18 @@ def home(request):
     tickets = []
     reviews = []
     followed_user = models.UserFollows.objects.filter(user=request.user)
-    user_tickets = models.Ticket.objects.filter(user=request.user)
-    user_tickets = user_tickets.annotate(content_type=Value('TICKET', CharField()))
+    user_tickets = get_user_tickets(request.user)
     tickets.extend(user_tickets)
-    user_reviews = models.Review.objects.filter(user=request.user)
-    user_reviews = user_reviews.annotate(content_type=Value('REVIEW', CharField()))
+    user_reviews = get_user_reviews(request.user)
     reviews.extend(user_reviews)
     for ticket in user_tickets:
         user_tickets_reviews = ticket.review_set.all()
         user_tickets_reviews = user_tickets_reviews.annotate(content_type=Value('REVIEW', CharField()))
         reviews.extend(user_tickets_reviews)
     for user in followed_user:
-        followed_user_tickets = models.Ticket.objects.filter(user=user.followed_user)
-        followed_user_tickets = followed_user_tickets.annotate(content_type=Value('TICKET', CharField()))
+        followed_user_tickets = get_user_tickets(user.followed_user)
         tickets.extend(followed_user_tickets)
-        followed_user_reviews = models.Review.objects.filter(user=user.followed_user)
-        followed_user_reviews = followed_user_reviews.annotate(content_type=Value('REVIEW', CharField()))
+        followed_user_reviews = get_user_reviews(user.followed_user)
         reviews.extend(followed_user_reviews)
     all_posts = sorted(set(chain(tickets, reviews)), key=lambda instance: instance.time_created, reverse=True)
     return render(request, 'reviewapp/home.html', context={"posts": all_posts})
@@ -39,13 +58,13 @@ def home(request):
 
 @login_required
 def posts(request):
-    tickets = models.Ticket.objects.filter(user=request.user)
-    reviews = models.Review.objects.filter(user=request.user)
+    tickets = get_user_tickets(request.user)
+    reviews = get_user_reviews(request.user)
     all_posts = sorted(chain(tickets, reviews), key=lambda instance: instance.time_created, reverse=True)
     return render(request, 'reviewapp/posts.html', context={"posts": all_posts})
 
 
-class TicketCreationView(View):
+class TicketCreationView(LoginRequiredMixin, View):
     template_name = 'reviewapp/create_ticket.html'
     form_class = forms.TicketForm
 
@@ -63,27 +82,18 @@ class TicketCreationView(View):
         return render(request, self.template_name, context={"form": form})
 
 
-# class TicketView(View):
-#     template_name = 'reviewapp/ticket.html'
-#     form_class = forms.TicketForm
-#
-#     def get(self, request, ticket_id):
-#         ticket = models.Ticket.objects.get(id=ticket_id)
-#         return render(request, self.template_name, context={"ticket": ticket})
-
-
-class ReviewCreationView(View):
+class ReviewCreationView(LoginRequiredMixin, View):
     template_name = 'reviewapp/create_review.html'
     form_class = forms.ReviewForm
 
     def get(self, request, ticket_id):
-        ticket = models.Ticket.objects.get(id=ticket_id)
+        ticket = get_ticket_by_id(ticket_id)
         form = self.form_class()
         return render(request, self.template_name, context={"ticket": ticket, "form": form})
 
     def post(self, request, ticket_id):
-        ticket = models.Ticket.objects.get(id=ticket_id)
-        has_review = models.Review.objects.filter(ticket=ticket)
+        ticket = get_ticket_by_id(ticket_id)
+        has_review = models.Review.objects.filter(ticket=ticket).exists()
         form = self.form_class(request.POST)
         if form.is_valid() and not has_review:
             review = form.save(commit=False)
@@ -94,7 +104,7 @@ class ReviewCreationView(View):
         return render(request, self.template_name, context={"ticket": ticket, "form": form})
 
 
-class FullReviewView(View):
+class FullReviewView(LoginRequiredMixin, View):
     template_name = 'reviewapp/create_ticket_review.html'
     ticket_form_class = forms.TicketForm
     review_form_class = forms.ReviewForm
@@ -119,57 +129,88 @@ class FullReviewView(View):
         return render(request, self.template_name, context={"ticket_form": ticket_form, "review_form": review_form})
 
 
-@login_required
-def update_ticket(request, ticket_id):
-    ticket = models.Ticket.objects.get(id=ticket_id)
-    old_image = ticket.image
-    if request.method == "POST" and request.user == ticket.user:
-        form = forms.TicketForm(request.POST, request.FILES, instance=ticket)
-        if form.is_valid():
-            if old_image:
-                if 'image' not in form.files or ('image' in form.files and form.files["image"] != old_image):
-                    os.remove(old_image.path)
-            form.save()
-            return redirect('posts')
-    else:
-        form = forms.TicketForm(instance=ticket)
-    return render(request, 'reviewapp/update_post.html', {'form': form, "is_ticket": True})
+class UpdateTicketView(LoginRequiredMixin, View):
+    template_name = 'reviewapp/update_post.html'
+    ticket_form_class = forms.TicketForm
 
+    def get(self, request, ticket_id):
+        ticket = get_ticket_by_id(ticket_id)
+        form = self.ticket_form_class(instance=ticket)
+        return render(request, self.template_name, context={'form': form, "is_ticket": True})
 
-@login_required
-def update_review(request, review_id):
-    review = models.Review.objects.get(id=review_id)
-    if request.method == "POST" and request.user == review.user:
-        form = forms.ReviewForm(request.POST, instance=review)
-        if form.is_valid():
-            form.save()
-            return redirect('posts')
-    else:
-        form = forms.ReviewForm(instance=review)
-    return render(request, 'reviewapp/update_post.html', {'form': form, "is_ticket": False, 'ticket': review.ticket})
-
-
-@login_required
-def delete_ticket(request, ticket_id):
-    ticket = models.Ticket.objects.get(id=ticket_id)
-    if request.method == 'POST' and request.user == ticket.user:
-        if ticket.image:
-            os.remove(ticket.image.path)
-        ticket.delete()
+    def post(self, request, ticket_id):
+        ticket = get_ticket_by_id(ticket_id)
+        old_image = ticket.image
+        if request.user == ticket.user:
+            form = self.ticket_form_class(request.POST, request.FILES, instance=ticket)
+            if form.is_valid():
+                if old_image:
+                    if 'image' not in form.files or ('image' in form.files and form.files["image"] != old_image):
+                        os.remove(old_image.path)
+                form.save()
+                return redirect('posts')
+            return render(request, self.template_name, context={'form': form, "is_ticket": True})
         return redirect('posts')
-    return render(request, 'reviewapp/delete_post.html', context={"ticket": ticket})
 
 
-@login_required
-def delete_review(request, review_id):
-    review = models.Review.objects.get(id=review_id)
-    if request.method == 'POST' and request.user == review.user:
-        review.delete()
+class UpdateReviewView(LoginRequiredMixin, View):
+    template_name = 'reviewapp/update_post.html'
+    review_form_class = forms.ReviewForm
+
+    def get(self, request, review_id):
+        review = get_review_by_id(review_id)
+        form = self.review_form_class(instance=review)
+        return render(request, self.template_name, context={'form': form, "is_ticket": False, 'ticket': review.ticket})
+
+    def post(self, request, review_id):
+        review = get_review_by_id(review_id)
+        if request.user == review.user:
+            form = self.review_form_class(request.POST, instance=review)
+            if form.is_valid():
+                form.save()
+                return redirect('posts')
+            return render(request, self.template_name, context={
+                'form': form,
+                "is_ticket": False,
+                'ticket': review.ticket})
         return redirect('posts')
-    return render(request, 'reviewapp/delete_post.html', context={"review": review})
 
 
-class FollowerAddView(View):
+class DeleteTicketView(LoginRequiredMixin, View):
+    template_name = 'reviewapp/delete_post.html'
+
+    def get(self, request, ticket_id):
+        ticket = get_ticket_by_id(ticket_id)
+        return render(request, self.template_name, context={"ticket": ticket})
+
+    def post(self, request, ticket_id):
+        ticket = get_ticket_by_id(ticket_id)
+        if request.user == ticket.user:
+            if ticket.image:
+                os.remove(ticket.image.path)
+            ticket.delete()
+            return redirect('posts')
+        message = "Vous n'avez pas les droits pour supprimer ce ticket."
+        return render(request, self.template_name, context={"ticket": ticket, "message": message})
+
+
+class DeleteReviewView(LoginRequiredMixin, View):
+    template_name = 'reviewapp/delete_post.html'
+
+    def get(self, request, review_id):
+        review = get_review_by_id(review_id)
+        return render(request, self.template_name, context={"review": review})
+
+    def post(self, request, review_id):
+        review = get_review_by_id(review_id)
+        if request.user == review.user:
+            review.delete()
+            return redirect('posts')
+        message = "Vous n'avez pas les droits pour supprimer cette critique."
+        return render(request, self.template_name, context={"review": review, "message": message})
+
+
+class FollowerAddView(LoginRequiredMixin, View):
     template_name = 'reviewapp/add_followers.html'
 
     def follows(self, user):
@@ -184,14 +225,15 @@ class FollowerAddView(View):
             "subscribers": users_links["subscribers"]})
 
     def post(self, request):
-        message = ""
         users_links = self.follows(request.user)
         if request.POST.get("username") == request.user.username:
             message = "Vous ne pouvez pas vous abonner à vous-même."
         else:
             try:
                 selected_user = User.objects.get(username=request.POST.get("username"))
-                subscription = models.UserFollows.objects.filter(user=request.user, followed_user=selected_user)
+                subscription = models.UserFollows.objects\
+                    .filter(user=request.user, followed_user=selected_user)\
+                    .exists()
                 if not subscription and selected_user != request.user:
                     new_user_link = models.UserFollows(user=request.user, followed_user=selected_user)
                     new_user_link.save()
@@ -206,11 +248,18 @@ class FollowerAddView(View):
             "subscribers": users_links["subscribers"]})
 
 
-@login_required
-def delete_follower(request, follower_id):
-    followed_user = User.objects.get(id=follower_id)
-    users_link = models.UserFollows.objects.get(user=request.user, followed_user=followed_user)
-    if request.method == 'POST':
-        users_link.delete()
-        return redirect('add-follower')
-    return render(request, 'reviewapp/delete_follower.html', context={"followed_user": followed_user})
+class DeleteFollowerView(LoginRequiredMixin, View):
+    template_name = 'reviewapp/delete_follower.html'
+
+    def get(self, request, follower_id):
+        followed_user = User.objects.get(id=follower_id)
+        return render(request, self.template_name, context={"followed_user": followed_user})
+
+    def post(self, request, follower_id):
+        followed_user = User.objects.get(id=follower_id)
+        users_link = models.UserFollows.objects.filter(user=request.user, followed_user=followed_user).exists()
+        if users_link:
+            models.UserFollows.objects.get(user=request.user, followed_user=followed_user).delete()
+            return redirect('add-follower')
+        message = "Vous n'êtes pas abonné à cet utilisateur."
+        return render(request, self.template_name, context={"followed_user": followed_user, "message": message})

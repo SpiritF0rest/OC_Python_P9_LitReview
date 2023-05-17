@@ -8,19 +8,23 @@
 </head>
 <body>
     <header>
+        {% if not user.is_authenticated %}
+        <div class="logo_block logo_block_login">
+            <img src="{% static 'images/logo.png' %}" alt="logo de LITReview"/>
+        </div>
+        {% else %}
         <div class="logo_block">
             <img src="{% static 'images/logo.png' %}" alt="logo de LITReview"/>
         </div>
         <nav>
             <ul>
-                {% if user.is_authenticated %}
                 <li><a href="{% url 'home' %}" class="nav_link">Flux</a></li>
                 <li><a href="{% url 'posts' %}"class="nav_link">Posts</a></li>
                 <li><a href="{% url 'add-follower' %}"class="nav_link">Abonnements</a></li>
                 <li><a href="{% url 'logout' %}" class="nav_link">Se déconnecter</a></li>
-                {% endif %}
             </ul>
         </nav>
+        {% endif %}
     </header>
     <main>
         {% block content %}{% endblock content %}

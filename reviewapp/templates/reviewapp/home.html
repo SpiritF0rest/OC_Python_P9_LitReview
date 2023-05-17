@@ -7,66 +7,14 @@
   {% for post in posts %}
     {% if post.content_type == 'TICKET' %}
       <div class="ticket_block">
-        <div class="ticket_header">
-          {% if post.user == user %}
-            <p>Vous avez demandé une critique</p>
-          {% else %}
-            <p>{{ post.user }} a demandé une critique</p>
-          {% endif %}
-          <p>{{ post.time_created|date:"H:i, d F Y" }}</p>
-        </div>
-        <p>{{ post.title }}</p>
-        {% if post.description %}
-        <p>{{ post.description }}</p>
-        {% endif %}
-        {% if post.image %}
-        <div class="image">
-          <img src="{{ post.image.url }}" />
-        </div>
-        {% endif %}
+        {% include "reviewapp/ticket_snippet.html" %}
         {% if not post.review_set.all %}
           <a href="{% url 'review-create' post.id %}" class="button ticket_button">Créer une critique</a>
         {% endif %}
       </div>
-    {% endif %}
-    {% if post.content_type == 'REVIEW' %}
+    {% elif post.content_type == 'REVIEW' %}
       <div class="review_block">
-        <div class="review_header">
-          {% if post.user == user %}
-            <p>Vous avez publié une critique</p>
-          {% else %}
-            <p>{{ post.user }} a publié une critique</p>
-          {% endif %}
-          <p>{{ post.time_created|date:"H:i, d F Y" }}</p>
-        </div>
-        <div>
-          {% spaceless %}
-          <h2>{{ post.headline }} -
-            {% if post.rating > 0 %}<span>&#x2605;</span>{% else %}<span>&#x2606;</span>{% endif %}
-            {% if post.rating > 1 %}<span>&#x2605;</span>{% else %}<span>&#x2606;</span>{% endif %}
-            {% if post.rating > 2 %}<span>&#x2605;</span>{% else %}<span>&#x2606;</span>{% endif %}
-            {% if post.rating > 3 %}<span>&#x2605;</span>{% else %}<span>&#x2606;</span>{% endif %}
-            {% if post.rating > 4 %}<span>&#x2605;</span>{% else %}<span>&#x2606;</span>{% endif %}
-          </h2>
-          {% endspaceless %}
-        </div>
-        <p>{{ post.body }}</p>
-        <div class="ticket_block">
-          {% if post.ticket.user == user %}
-            <h3>Ticket - Vous</h3>
-          {% else %}
-            <h3>Ticket - {{ post.ticket.user }}</h3>
-          {% endif %}
-          <p>{{ post.ticket.title }}</p>
-          {% if post.ticket.description %}
-            <p>{{ post.ticket.description }}</p>
-          {% endif %}
-          {% if post.ticket.image %}
-            <div class="image">
-              <img src="{{ post.ticket.image.url }}" />
-            </div>
-          {% endif %}
-        </div>
+        {% include "reviewapp/review_snippet.html" %}
       </div>
     {% endif %}
   {% endfor %}
