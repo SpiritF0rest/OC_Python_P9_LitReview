@@ -1,13 +1,16 @@
 {% extends "index.html" %}
 {% block content %}
+<div class="login">
   <h2>Inscrivez-vous</h2>
-  <form method="post">
-    {{ form.as_p }}
+  <form method="post" class="login_form">
+    {{ form.as_div }}
     {% csrf_token %}
-    <button type="submit">S'inscrire</button>
+    <button type="submit" class="button">S'inscrire</button>
   </form>
   {% if forms.errors %}
     {{ form.errors }}
   {% endif %}
-  <p>Vous avez déjà un compte ? <a href="{% url 'login' %}">Connectez-vous.</a></p>
+  <p>Vous avez déjà un compte ? <a href="{% url 'login' %}" class="link">Connectez-vous.</a></p>
+</div>
+
 {% endblock content %}
