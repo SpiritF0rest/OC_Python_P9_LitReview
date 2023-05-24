@@ -1,8 +1,8 @@
 {% block content %}
-<div>
+<div class="post_block post_review_block">
     <p>Vous êtes en train de poster en réponse à</p>
-    <div>
-        <div>
+    <div class="post_block">
+        <div class="ticket_header">
             {% if user == ticket.user %}
                 <p>Vous avez demandé une critique</p>
             {% else %}
@@ -19,12 +19,12 @@
         {% endif %}
     </div>
 </div>
-<div>
+<div class="post_block">
     <p>Critique</p>
-    <form method="post">
+    <form method="post" class="post_form">
         {{ form.as_p }}
         {% csrf_token %}
-        <button type="submit">Envoyer</button>
+        <button type="submit" class="button post_button">Envoyer</button>
     </form>
 </div>
 {% endblock content %}

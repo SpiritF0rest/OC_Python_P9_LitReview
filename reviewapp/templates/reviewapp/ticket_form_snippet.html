@@ -1,7 +1,7 @@
 {% block content %}
-<form method="post" enctype="multipart/form-data">
+<form method="post" enctype="multipart/form-data" class="post_form">
   {{ form.as_p }}
   {% csrf_token %}
-  <button type="submit">Envoyer</button>
+  <button type="submit" class="button post_button">Envoyer</button>
 </form>
 {% endblock content %}

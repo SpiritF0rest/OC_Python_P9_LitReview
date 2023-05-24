@@ -6,17 +6,17 @@
             {% if post.content_type == 'TICKET' %}
                 {% include "reviewapp/ticket_snippet.html" %}
                 {% if post.user == user %}
-                    <div>
-                        <a href="{% url 'update-ticket' post.id %}" class="button">Modifier</a>
-                        <a href="{% url 'delete-ticket' post.id %}" class="button">Supprimer</a>
+                    <div class="buttons">
+                        <a href="{% url 'update-ticket' post.id %}" class="button button_update">Modifier</a>
+                        <a href="{% url 'delete-ticket' post.id %}" class="button button_update">Supprimer</a>
                     </div>
                 {% endif %}
             {% elif post.content_type == 'REVIEW' %}
                 {% include "reviewapp/review_snippet.html" %}
                 {% if post.user == user %}
-                    <div>
-                        <a href="{% url 'update-review' post.id %}" class="button">Modifier</a>
-                        <a href="{% url 'delete-review' post.id %}" class="button">Supprimer</a>
+                    <div class="buttons">
+                        <a href="{% url 'update-review' post.id %}" class="button button_update">Modifier</a>
+                        <a href="{% url 'delete-review' post.id %}" class="button button_update">Supprimer</a>
                     </div>
                 {% endif %}
             {% endif %}

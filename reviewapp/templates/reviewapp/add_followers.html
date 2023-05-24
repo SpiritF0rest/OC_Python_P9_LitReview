@@ -1,34 +1,36 @@
 {% extends 'index.html' %}
 {% block content %}
-  <div>
-    <h2>Suivre d'autres utilisateurs</h2>
-    <form method="post">
-      <label for="username"></label>
-      <input type="text" id="username" name="username" required placeholder="Nom d'utilisateur" />
-      {% csrf_token %}
-      <button type="submit" class="button">Envoyer</button>
-    </form>
-    {% if message %}
-    <p>{{ message }}</p>
-    {% endif %}
-  </div>
-  <div>
-    <h2>Abonnements</h2>
-    <ul>
-      {% for user in subscriptions %}
-      <li>
-        <p>{{user.followed_user}}</p>
-        <a href="{% url 'delete-follower' user.followed_user.id %}">Désabonner</a>
-      </li>
-      {% endfor %}
-    </ul>
-  </div>
-  <div>
-    <h2>Abonnés</h2>
-    <ul>
-      {% for user in subscribers %}
-      <li>{{user.user}}</li>
-      {% endfor %}
-    </ul>
+  <div class="content">
+    <div class="subscribe">
+      <h2>Suivre d'autres utilisateurs</h2>
+      <form method="post">
+        <label for="username"></label>
+        <input type="text" id="username" name="username" required placeholder="Nom d'utilisateur" class="input"/>
+        {% csrf_token %}
+        <button type="submit" class="button">Envoyer</button>
+      </form>
+      {% if message %}
+      <p>{{ message }}</p>
+      {% endif %}
+    </div>
+    <div class="follow">
+      <h2>Abonnements</h2>
+      <ul class="subscription">
+        {% for user in subscriptions %}
+        <li>
+          <p class="follow_subpart">{{user.followed_user}}</p>
+          <a href="{% url 'delete-follower' user.followed_user.id %}" class="follow_subpart unsubscribe">Désabonner</a>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div class="follow">
+      <h2>Abonnés</h2>
+      <ul class="subscriber">
+        {% for user in subscribers %}
+        <li class="follow_subpart">{{user.user}}</li>
+        {% endfor %}
+      </ul>
+    </div>
   </div>
 {% endblock content %}

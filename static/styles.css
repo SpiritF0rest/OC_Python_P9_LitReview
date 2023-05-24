@@ -65,9 +65,10 @@ nav > ul > li {
     border: solid black 1px;
     margin: 0 2rem;
     border-radius: 0.5rem 0.5rem;
+    cursor: pointer;
 }
 
-.button:hover {
+.button:hover, .unsubscribe:hover {
     background-color: #048b9a2e;
 }
 
@@ -77,7 +78,7 @@ nav > ul > li {
     margin-bottom: 1rem;
 }
 
-.ticket_block, .post_block {
+.ticket_block, .post_block, .content {
     position: relative;
 }
 
@@ -86,11 +87,11 @@ nav > ul > li {
     justify-content: space-between;
 }
 
-.ticket_button {
+.ticket_button, .post_button {
     position: absolute;
     right: 1rem;
     bottom: 1rem;
-    margin: 0;
+    margin: 0rem;
 }
 
 .image {
@@ -104,7 +105,7 @@ nav > ul > li {
     height: 100%;
 }
 
-.login, .login_form, .login_form > div {
+.login, .login_form, .login_form > div, .content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -137,4 +138,87 @@ nav > ul > li {
 
 .link {
     color: #048b9a;
+}
+
+.subscribe {
+    text-align: center;
+    padding-bottom: 0.5rem;
+}
+
+.follow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.follow > ul {
+    display: flex;
+    flex-direction: column;
+    margin-top: 0;
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.subscription > li, .subscriber > li {
+    list-style: none;
+}
+
+.subscription > li {
+    display: grid;
+    grid-template-columns: 7fr 1fr;
+    align-items: center;
+    margin: 0;
+}
+
+.subscription > li > p {
+    margin: 0;
+}
+
+.subscriber > li {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+}
+
+.follow_subpart {
+    padding: 0.5rem;
+    border: 1px solid black;
+    background: white;
+}
+
+.post_form > p, .post_form, .post_form > div > p {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0.5rem;
+}
+
+.post_form > p > label, .post_form > div > p > label {
+    padding-bottom: 0.5rem;
+}
+
+#id_rating {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+#id_body {
+    margin-bottom : 1rem;
+}
+
+main > h2, main > h1, .follow > h2 {
+    text-align: center;
+}
+
+.post_review_block {
+    margin-bottom: 0;
+}
+
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.button_update {
+    margin: 0 1rem;
 }
