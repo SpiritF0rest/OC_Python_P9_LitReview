@@ -10,6 +10,7 @@ class LoginForm(forms.Form):
     password = forms.CharField(max_length=63, widget=forms.PasswordInput, label="Mot de passe")
     password.widget.attrs.update({'placeholder': _("Mot de passe"), 'class': 'input'})
 
+
 class SignupForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):

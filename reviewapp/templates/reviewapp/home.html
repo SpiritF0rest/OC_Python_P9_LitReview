@@ -1,21 +1,21 @@
 {% extends "index.html" %}
 {% block content %}
-  <div class="home_buttons_block">
-    <p class="button"><a href="{% url 'ticket-create' %}">Demander une critique</a></p>
-    <p class="button"><a href="{% url 'review-ticket-create' %}">Créer une critique</a></p>
-  </div>
-  {% for post in posts %}
-    {% if post.content_type == 'TICKET' %}
-      <div class="ticket_block">
-        {% include "reviewapp/ticket_snippet.html" %}
-        {% if not post.review_set.all %}
-          <a href="{% url 'review-create' post.id %}" class="button ticket_button">Créer une critique</a>
-        {% endif %}
-      </div>
-    {% elif post.content_type == 'REVIEW' %}
-      <div class="review_block">
-        {% include "reviewapp/review_snippet.html" %}
-      </div>
-    {% endif %}
-  {% endfor %}
+<div class="home_buttons_block">
+  <p class="button"><a href="{% url 'ticket-create' %}">Demander une critique</a></p>
+  <p class="button"><a href="{% url 'review-ticket-create' %}">Créer une critique</a></p>
+</div>
+{% for post in posts %}
+{% if post.content_type == 'TICKET' %}
+<div class="ticket_block">
+  {% include "reviewapp/ticket_snippet.html" %}
+  {% if not post.review_set.all %}
+  <a href="{% url 'review-create' post.id %}" class="button ticket_button">Créer une critique</a>
+  {% endif %}
+</div>
+{% elif post.content_type == 'REVIEW' %}
+<div class="review_block">
+  {% include "reviewapp/review_snippet.html" %}
+</div>
+{% endif %}
+{% endfor %}
 {% endblock content %}

@@ -4,18 +4,20 @@
     <div class="post_block">
         <div class="ticket_header">
             {% if user == ticket.user %}
-                <p>Vous avez demandé une critique</p>
+            <p>Vous avez demandé une critique</p>
             {% else %}
-                <p>{{ ticket.user }} a demandé une critique</p>
+            <p>{{ ticket.user }} a demandé une critique</p>
             {% endif %}
             <p>{{ ticket.time_created|date:"H:i, d F Y" }}</p>
         </div>
         <h3>{{ ticket.title }}</h3>
         {% if ticket.description %}
-            <p>{{ ticket.description }}</p>
+        <p>{{ ticket.description }}</p>
         {% endif %}
         {% if ticket.image %}
-        <img src="{{ ticket.image.url }}">
+        <div class="image">
+            <img src="{{ ticket.image.url }}">
+        </div>
         {% endif %}
     </div>
 </div>

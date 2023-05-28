@@ -1,8 +1,9 @@
 from django.conf import settings
-from django.shortcuts import redirect, render
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect, render
 from django.views.generic import View
+
 from . import forms
 
 

@@ -1,11 +1,10 @@
 {% extends "index.html" %}
-
 {% block content %}
 <div class="content">
     {% if ticket %}
-        <p>Êtes-vous sûr de vouloir supprimer le ticket: {{ ticket.title }} ?</p>
+    <p>Êtes-vous sûr de vouloir supprimer le ticket: {{ ticket.title }} ?</p>
     {% else %}
-        <p>Êtes-vous sûr de vouloir supprimer la review: {{ review.headline }} ?</p>
+    <p>Êtes-vous sûr de vouloir supprimer la review: {{ review.headline }} ?</p>
     {% endif %}
     <form method="post">
         {% csrf_token %}

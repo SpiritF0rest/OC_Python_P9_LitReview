@@ -1,9 +1,9 @@
 {% block content %}
 <div class="review_header">
   {% if post.user == user %}
-    <p>Vous avez publié une critique</p>
+  <p>Vous avez publié une critique</p>
   {% else %}
-    <p>{{ post.user }} a publié une critique</p>
+  <p>{{ post.user }} a publié une critique</p>
   {% endif %}
   <p>{{ post.time_created|date:"H:i, d F Y" }}</p>
 </div>
@@ -21,18 +21,18 @@
 <p>{{ post.body }}</p>
 <div class="ticket_block">
   {% if post.ticket.user == user %}
-    <h3>Ticket - Vous</h3>
+  <h3>Ticket - Vous</h3>
   {% else %}
-    <h3>Ticket - {{ post.ticket.user }}</h3>
+  <h3>Ticket - {{ post.ticket.user }}</h3>
   {% endif %}
   <p>{{ post.ticket.title }}</p>
   {% if post.ticket.description %}
-    <p>{{ post.ticket.description }}</p>
+  <p>{{ post.ticket.description }}</p>
   {% endif %}
   {% if post.ticket.image %}
-    <div class="image">
-      <img src="{{ post.ticket.image.url }}" />
-    </div>
+  <div class="image">
+    <img src="{{ post.ticket.image.url }}" />
+  </div>
   {% endif %}
 </div>
 {% endblock content %}

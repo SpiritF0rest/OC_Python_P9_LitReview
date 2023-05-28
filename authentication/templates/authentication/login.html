@@ -5,7 +5,7 @@
   <form method="post" class="login_form">
     {{ form.as_div }}
     {% csrf_token %}
-      <button type="submit" class="button">Se connecter</button>
+    <button type="submit" class="button">Se connecter</button>
   </form>
   <p>Pas encore de compte ? <a href="{% url 'signup' %}" class="link">Inscrivez-vous.</a></p>
 </div>
