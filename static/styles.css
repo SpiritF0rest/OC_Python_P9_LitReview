@@ -187,13 +187,25 @@ nav > ul > li {
     background: white;
 }
 
-.post_form > p, .post_form, .post_form > div > p {
+.post_form {
+    width: 100%;
+}
+
+.post_form > p, .post_form, .post_form > div > p, .ticket_form > div {
     display: flex;
     flex-direction: column;
     padding-bottom: 0.5rem;
 }
 
-.post_form > p > label, .post_form > div > p > label {
+.ticket_form > div {
+    padding-bottom: 1.5rem;
+}
+
+.ticket_form > div > .image {
+    padding-bottom: 1rem;
+}
+
+.post_form > p > label, .post_form > div > p > label, .ticket_form > div > label {
     padding-bottom: 0.5rem;
 }
 

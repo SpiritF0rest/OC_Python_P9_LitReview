@@ -1,13 +1,12 @@
 {% extends 'index.html' %}
-
 {% block content %}
-    {% if is_ticket %}
-        <h2>Modifier votre ticket</h2>
-        <div class="post_block">
-            {% include "reviewapp/ticket_form_snippet.html" %}
-        </div>
-    {% else %}
-        <h2>Modifier votre critique</h2>
-        {% include "reviewapp/review_form_snippet.html" %}
-    {% endif %}
+{% if is_ticket %}
+<h2>Modifier votre ticket</h2>
+<div class="post_block update_post">
+    {% include "reviewapp/ticket_form_snippet.html" %}
+</div>
+{% else %}
+<h2>Modifier votre critique</h2>
+{% include "reviewapp/review_form_snippet.html" %}
+{% endif %}
 {% endblock %}

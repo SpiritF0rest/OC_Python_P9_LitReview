@@ -1,15 +1,14 @@
 import os
+from itertools import chain
 
-from django.shortcuts import render, redirect
-from django.db.models import CharField, Value
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ObjectDoesNotExist
-from django.contrib.auth.decorators import login_required
+from django.db.models import CharField, Value
+from django.shortcuts import render, redirect
 from django.views.generic import View
 
 from authentication.models import User
 from . import forms, models
-from itertools import chain
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 def get_user_tickets(user):
@@ -34,34 +33,38 @@ def get_review_by_id(review_id):
     return review
 
 
-@login_required
-def home(request):
-    tickets = []
-    reviews = []
-    followed_user = models.UserFollows.objects.filter(user=request.user)
-    user_tickets = get_user_tickets(request.user)
-    tickets.extend(user_tickets)
-    user_reviews = get_user_reviews(request.user)
-    reviews.extend(user_reviews)
-    for ticket in user_tickets:
-        user_tickets_reviews = ticket.review_set.all()
-        user_tickets_reviews = user_tickets_reviews.annotate(content_type=Value('REVIEW', CharField()))
-        reviews.extend(user_tickets_reviews)
-    for user in followed_user:
-        followed_user_tickets = get_user_tickets(user.followed_user)
-        tickets.extend(followed_user_tickets)
-        followed_user_reviews = get_user_reviews(user.followed_user)
-        reviews.extend(followed_user_reviews)
-    all_posts = sorted(set(chain(tickets, reviews)), key=lambda instance: instance.time_created, reverse=True)
-    return render(request, 'reviewapp/home.html', context={"posts": all_posts})
+class Home(LoginRequiredMixin, View):
+    template_name = 'reviewapp/home.html'
+
+    def get(self, request):
+        tickets = []
+        reviews = []
+        followed_user = models.UserFollows.objects.filter(user=request.user)
+        user_tickets = get_user_tickets(request.user)
+        tickets.extend(user_tickets)
+        user_reviews = get_user_reviews(request.user)
+        reviews.extend(user_reviews)
+        for ticket in user_tickets:
+            user_tickets_reviews = ticket.review_set.all()
+            user_tickets_reviews = user_tickets_reviews.annotate(content_type=Value('REVIEW', CharField()))
+            reviews.extend(user_tickets_reviews)
+        for user in followed_user:
+            followed_user_tickets = get_user_tickets(user.followed_user)
+            tickets.extend(followed_user_tickets)
+            followed_user_reviews = get_user_reviews(user.followed_user)
+            reviews.extend(followed_user_reviews)
+        all_posts = sorted(set(chain(tickets, reviews)), key=lambda instance: instance.time_created, reverse=True)
+        return render(request, self.template_name, context={"posts": all_posts})
 
 
-@login_required
-def posts(request):
-    tickets = get_user_tickets(request.user)
-    reviews = get_user_reviews(request.user)
-    all_posts = sorted(chain(tickets, reviews), key=lambda instance: instance.time_created, reverse=True)
-    return render(request, 'reviewapp/posts.html', context={"posts": all_posts})
+class Posts(LoginRequiredMixin, View):
+    template_name = 'reviewapp/posts.html'
+
+    def get(self, request):
+        tickets = get_user_tickets(request.user)
+        reviews = get_user_reviews(request.user)
+        all_posts = sorted(chain(tickets, reviews), key=lambda instance: instance.time_created, reverse=True)
+        return render(request, self.template_name, context={"posts": all_posts})
 
 
 class TicketCreationView(LoginRequiredMixin, View):
@@ -132,22 +135,33 @@ class FullReviewView(LoginRequiredMixin, View):
 class UpdateTicketView(LoginRequiredMixin, View):
     template_name = 'reviewapp/update_post.html'
     ticket_form_class = forms.TicketForm
+    update_image_form_class = forms.UpdateTicketWithImageForm
 
     def get(self, request, ticket_id):
         ticket = get_ticket_by_id(ticket_id)
-        form = self.ticket_form_class(instance=ticket)
+        if ticket.image:
+            form = self.update_image_form_class(instance=ticket)
+        else:
+            form = self.ticket_form_class(instance=ticket)
         return render(request, self.template_name, context={'form': form, "is_ticket": True})
 
     def post(self, request, ticket_id):
         ticket = get_ticket_by_id(ticket_id)
         old_image = ticket.image
         if request.user == ticket.user:
-            form = self.ticket_form_class(request.POST, request.FILES, instance=ticket)
+            if ticket.image:
+                form = self.update_image_form_class(request.POST, request.FILES, instance=ticket)
+            else:
+                form = self.ticket_form_class(request.POST, request.FILES, instance=ticket)
             if form.is_valid():
+                updated_ticket = form.save(commit=False)
                 if old_image:
-                    if 'image' not in form.files or ('image' in form.files and form.files["image"] != old_image):
+                    if "image-clear" in request.POST:
                         os.remove(old_image.path)
-                form.save()
+                        updated_ticket.image = ""
+                    elif 'image' in form.files and form.files["image"] != old_image:
+                        os.remove(old_image.path)
+                updated_ticket.save()
                 return redirect('posts')
             return render(request, self.template_name, context={'form': form, "is_ticket": True})
         return redirect('posts')
