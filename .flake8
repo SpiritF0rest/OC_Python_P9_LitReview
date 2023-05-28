@@ -1,0 +1,5 @@
+[flake8]
+exclude = .git, .idea, .gitignore, __pycache__, env, README.md, requirements.txt, flake8_rapport, authentication/migrations, reviewapp/migrations
+max-line-length = 119
+format = html
+htmldir = flake8_rapport
