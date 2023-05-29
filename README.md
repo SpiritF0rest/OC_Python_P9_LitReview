@@ -60,6 +60,15 @@ From cloned folder after activate the virtual environment:
 $ flake8
 ```
 
+### :red_haired_man: Test user :red_haired_man:
+
+There are 3 test users whose usernames are:
+- yohan
+- daniel
+- gael
+***
+The password for these accounts is : 1234Aze!
+
 ***
 
 :snake: Enjoy :snake:
