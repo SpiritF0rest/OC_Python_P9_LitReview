@@ -53,6 +53,16 @@ $ deactivate
 
 Warning, for the prerequisites of the evaluation of the student project, db.sqlite3 and media directory are not in .gitignore file.
 
+### :wrench: Migrations :wrench:
+
+```
+To create a migration after modifying the models
+$ python3 manage.py makemigrations
+
+To apply migrations
+$ python3 manage.py migrate
+```
+
 ### :mag_right: Generate a new flake8 html :mag_right:
 
 ```
