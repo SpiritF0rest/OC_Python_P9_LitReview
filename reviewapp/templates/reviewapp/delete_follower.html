@@ -1,9 +1,10 @@
 {% extends "index.html" %}
 {% block content %}
-<p>Êtes-vous sûr de vouloir vous désabonner de {{ followed_user }} ?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" class="button">Se désabonner</button>
-</form>
-<a href="{% url 'add-follower' %}" class="button">Retour aux abonnements</a>
+<div class="content">
+    <p>Êtes-vous sûr de vouloir vous désabonner de {{ followed_user }} ?</p>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="button">Se désabonner</button>
+    </form>
+</div>
 {% endblock %}
